@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wellthora Chat</title>
+    <style>
+        body { font-family: Arial, max-width: 600px, margin: 20px auto; padding: 20px; }
+        textarea { width: 100%; height: 100px; margin: 10px 0; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; cursor: pointer; }
+        #response { margin-top: 20px; padding: 15px; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>Chat with Wellthora</h1>
+    <textarea id="query" placeholder="Type your question..."></textarea>
+    <button onclick="ask()">Ask</button>
+    <div id="response"></div>
+
+    <script>
+        async function ask() {
+            const query = document.getElementById('query').value;
+            const btn = document.querySelector('button');
+            const responseDiv = document.getElementById('response');
+            
+            if(!query) return alert('Please type a question');
+            
+            btn.disabled = true;
+            responseDiv.textContent = 'Thinking...';
+
+            try {
+                const response = await fetch('https://your-vercel-url.vercel.app/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: query })
+                });
+                
+                const data = await response.json();
+                responseDiv.textContent = data.answer || "No answer found";
+            } catch(err) {
+                responseDiv.textContent = "Error: " + err.message;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
